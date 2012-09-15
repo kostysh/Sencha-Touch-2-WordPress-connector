@@ -2,53 +2,45 @@ Ext.define('Wp.controller.Rpc', {
     extend: 'Ext.app.Controller',    
     
     requires: [
-        'Ext.ux.data.Jsonrpc',
+        'Ext.ux.client.wp.Wp',
         'Ext.device.Notification'
     ],
     
     config: {
-        models: [
-            'Wp.model.rpc.GetCategories'
-        ]
+        refs: {
+            wpToolBar: '#tools'
+        }
     },
     
     init: function() {
         var me = this;
         
-        Ext.jsonRPC = Ext.create('Ext.ux.data.Jsonrpc', {
+        Ext.Wp = Ext.create('Ext.ux.client.wp.Wp', {
             url: 'http://mindsaur.com/demo/wp/xmlrpc.php',
-            protocol: 'XML-RPC',
-            timeout: 10000,
-            scope: me,
+            blogId: 1
+        });
         
-            // Remote API definition
-            api: [
-                {
-                    name: 'wp.getCategories',
-                    alias: 'getCategories',
-                    model: 'Wp.model.rpc.GetCategories'
-                }
-            ],
-
-            hooks: {
-                getCategories: function(result) {
-
-                    // <debug>
-                    if (Ext.isObject(result)) {
-                        console.log('Server response: ', result);
-                    }
-                    // </debug>
-
-                    return result;
-                }
-            },
-        
-            // Default exception handler
-            error: function(err) {
+        // Listen for Wp client exceptions
+        Ext.Wp.on({
+            scope: Ext.Wp,
+            exception: function(err) {
+                Ext.Viewport.setMasked(false);                
                 Ext.device.Notification.show({
-                    title: err.title || 'Fail!',
+                    title: err.title || 'Exception',
                     message: err.message || 'Unknown error'
                 });
+            },
+            authenticationsuccess: function() {
+                var toolbar = me.getWpToolBar();
+                if (toolbar && toolbar.isComponent) {
+                    toolbar.setHidden(false);
+                }
+            },
+            authenticationfailure: function() {
+                var toolbar = me.getWpToolBar();
+                if (toolbar && toolbar.isComponent) {
+                    toolbar.setHidden(true);
+                }
             }
         });
     }

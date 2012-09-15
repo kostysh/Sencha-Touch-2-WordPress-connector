@@ -1,11 +1,11 @@
 Ext.define('Wp.view.Main', {
     extend: 'Ext.NavigationView',
-    xtype: 'main',
+    id: 'home',
         
     requires: [
         'Ext.Toolbar',
         'Ext.Button',
-        'Ext.Spacer'
+        'Ext.Spacer'        
     ],
     
     config: {
@@ -23,6 +23,22 @@ Ext.define('Wp.view.Main', {
 
                         items: [
                             {
+                                id: 'setbtn',
+                                xtype: 'button',
+                                iconCls: 'settings',
+                                iconMask: true,
+                                align: 'left'
+                            },
+                            
+//                            {
+//                                id: 'menubtn',
+//                                xtype: 'button',
+//                                iconCls: 'list',
+//                                iconMask: true,
+//                                align: 'right'
+//                            },
+                            
+                            {
                                 xtype: 'spacer'
                             },
 
@@ -36,10 +52,7 @@ Ext.define('Wp.view.Main', {
                         ]
                     },
                     {
-                        id: 'mimibtn',
-                        xtype: 'button',
-                        centered: true,
-                        text: 'MIMI'
+                        xtype: 'wptoolbar'
                     }
                 ]
             }

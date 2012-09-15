@@ -1,28 +1,49 @@
 Ext.define('Wp.controller.Main', {
     extend: 'Ext.app.Controller',
     
+    requires: [
+        'Ext.Picker'
+    ],
+    
     config: {
+        views: [
+            'Wp.view.Login',
+            'Wp.view.CategoryPicker'
+        ],        
+        
         routes: {
             'page/:id': 'showPageById'
         },
         
         refs: {
-            mainView: 'main',
-            infoBtn: 'main #infobtn',
-            mimiBtn: 'main #mimibtn'
+            mainView: '#home',
+            loginForm: '#loginform',
+            settingsBtn: '#setbtn',
+            infoBtn: '#home #infobtn',
+            menuBtn: '#home #menubtn',
+            picker: '#categpicker'
         },
         
         control: {
             mainView: {
-                activeitemchange: 'onActiveItemChange'
+                activeitemchange: 'onActiveItemChange',
+                show: 'onMainViewShow'
+            },
+            
+            settingsBtn: {
+                tap: 'onLoginBtnTap'
             },
             
             infoBtn: {
                 tap: 'onInfoBtnTap'
             },
             
-            mimiBtn: {
-                tap: 'onMimiBtnTap'
+            menuBtn: {
+                tap: 'onMenuBtnTap'
+            },
+            
+            picker: {
+                change: 'onCategoryPick'
             }
         }
     },
@@ -62,26 +83,94 @@ Ext.define('Wp.controller.Main', {
         }
     },
     
+    onMainViewShow: function(mainView) {
+        var loginId = Ext.Wp.getLoginId();
+        
+        if (!Ext.isObject(loginId)) {
+            this.onLoginBtnTap();
+        }
+    },
+    
+    onLoginBtnTap: function() {
+        var me = this;
+        var loginForm = me.getLoginForm() || Ext.create('Wp.view.Login');
+        Ext.Viewport.add(loginForm);
+        loginForm.show();
+    },
+    
     onInfoBtnTap: function() {
         this.getMainView().push({
             xtype: 'info'
         });
     },
     
-    onMimiBtnTap: function() {
-        Ext.jsonRPC.getCategories({
-            blog_id: 1,
-            username: 'sencha',
-            password: 'qwerty'
-        }, this.onGetCategoriesLoad);
+    onMenuBtnTap: function() {
+        var me = this;
+        
+        Ext.Viewport.setMasked({
+            xtype: 'loadmask',
+            message: 'Loading...'
+        });
+        
+        Ext.Wp.getCategories({
+            scope: me,
+            success: me.onCaregoriesLoadSuccess,
+            failure: me.onCaregoriesLoadFailure
+        });
     },
     
-    onGetCategoriesLoad: function(result) {
-        console.log('Categories', result);
+    onCaregoriesLoadSuccess: function(result) {
+        var me = this;
+        Ext.Viewport.setMasked(false);
+        
+        console.log('Categs', result);
+            
+        var dataFields = [];
+        for (var i in result) {                
+            if (Ext.isDefined(result[i]['categoryName'])) {
+
+                dataFields.push({
+                    text: result[i]['categoryName'], 
+                    value: result[i]['rssUrl']
+                });
+            }
+        }
+        
+        var picker = me.getPicker() || Ext.create('Wp.view.CategoryPicker');
+        
+        picker.setSlots([
+            {
+                name : 'url',
+                title: 'Categories',
+                data: dataFields
+            }
+        ]);
+        
+        Ext.Viewport.add(picker);
+        picker.show();
+    },
+    
+    onCategoryPick: function(picker, result) {
+        console.log('PICKPICK', result['url']);
+        
+        Ext.Wp.getPosts({
+            scope: this,
+            success: function(result) {
+                console.log('Success', result);
+            },
+            failure: function(err) {
+                console.log('Failure', err);
+            }
+        });
+        
+    },
+    
+    onCaregoriesLoadFailure: function(err) {
+        Ext.Viewport.setMasked(false);
         
         Ext.device.Notification.show({
-            title: 'Success!',
-            message: 'We got categories, details in console'
+            title: 'Failure',
+            message: 'Unable to load categories'
         });
     }
 });

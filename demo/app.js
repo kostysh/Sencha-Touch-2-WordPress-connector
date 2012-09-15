@@ -1,7 +1,9 @@
+// <debug>
 Ext.Loader.setPath({
-    'Ext': 'touch/src',
+    'Ext': 'sdk/src',
     'Ext.ux': '../src/ux'
 });
+// </debug>
 
 Ext.application({
     name: 'Wp',
@@ -12,12 +14,15 @@ Ext.application({
 
     views: [
         'Main',
-        'Info'
+        'Info',
+        'Toolbar'
     ],
     
     controllers: [
         'Main',
-        'Rpc'
+        'Rpc',
+        'Login',
+        'Toolbar'
     ],
 
     icon: {
