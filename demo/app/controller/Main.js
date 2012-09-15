@@ -123,8 +123,6 @@ Ext.define('Wp.controller.Main', {
         var me = this;
         Ext.Viewport.setMasked(false);
         
-        console.log('Categs', result);
-            
         var dataFields = [];
         for (var i in result) {                
             if (Ext.isDefined(result[i]['categoryName'])) {

@@ -3,17 +3,17 @@ Ext.define('Wp.controller.Toolbar', {
     
     config: {
         refs: {
-            tools: '#actions'
+            tools: '#tools'
         },
         
         control: {
             tools: {
-                toggle: 'onToolBarToggle'
+                itemtap: 'onToolBarItemtap'
             }
         }
     },
     
-    onToolBarToggle: function(container, button, pressed) {
-        console.log("User toggled the '" + button.text + "' button: " + (pressed ? 'on' : 'off'));
+    onToolBarItemtap: function(list, index, target, record) {
+        console.log('Action', record.get('action'));
     }
 });

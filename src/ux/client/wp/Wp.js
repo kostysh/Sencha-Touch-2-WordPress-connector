@@ -108,17 +108,23 @@ Ext.define('Ext.ux.client.wp.Wp', {
             callbacks.success = Ext.isFunction(callbacks.success) ? callbacks.success : Ext.emptyFn;
             callbacks.failure = Ext.isFunction(callbacks.failure) ? callbacks.failure : Ext.emptyFn;
         }
+        
+        Ext.Viewport.setMasked({
+            xtype: 'loadmask'
+        });
 
         me.getOptions({
             success: function(result) {
                 me.fireEvent('authenticationsuccess', result);
                 callbacks.success.call(me, result);
+                Ext.Viewport.setMasked(false);
             },
             failure: function(err) {
                 me.setUsername('');
                 me.setPassword('');
                 me.fireEvent('authenticationfailure', err);
                 callbacks.failure.call(me, err);
+                Ext.Viewport.setMasked(false);
             }
         });
     },

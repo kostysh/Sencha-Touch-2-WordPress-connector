@@ -15,6 +15,7 @@ Ext.define('Wp.view.Main', {
             {
                 id: 'Main',
                 title: 'WP connector',
+                layout: 'fit',
                 
                 items: [
                     {

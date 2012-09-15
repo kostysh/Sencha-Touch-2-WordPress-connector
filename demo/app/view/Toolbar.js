@@ -1,44 +1,38 @@
 Ext.define('Wp.view.Toolbar', {
-    extend: 'Ext.Toolbar',
+    extend: 'Ext.dataview.List',
     xtype: 'wptoolbar',
     id: 'tools',
     
-    requires: [
-        'Ext.SegmentedButton'
-    ],
-    
     config: {
-        docked: 'top',
         hidden: true,
+        disableSelection: true,
         
-        layout: {
-            type: 'hbox',
-            align: 'center',
-            pack: 'center'
-        },
+        itemTpl: '{title}',
         
-        items: [
+        data: [
             {
-                id: 'actions',
-                xtype: 'segmentedbutton',
-                
-                items: [
-                    {
-                        text: '+ Post'
-                    },
-                    {
-                        text: '+ Page'
-                    },
-                    {
-                        text: 'Posts'
-                    },
-                    {
-                        text: 'Pages'
-                    },
-                    {
-                        text: 'Comments'
-                    }
-                ]
+                title: '+ Post', 
+                action: 'addpost'
+            },
+
+            {
+                title: '+ Page', 
+                action: 'addpage'
+            },
+
+            {
+                title: 'Posts', 
+                action: 'getposts'
+            },
+
+            {
+                title: 'Pages', 
+                action: 'getpages'
+            },
+
+            {
+                title: 'Comments', 
+                action: 'getcomments'
             }
         ]
     }
